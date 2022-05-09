@@ -166,6 +166,10 @@ for id in AllUsers:
     if expirationDate is not None:
         user['expirationDate'] = get_dt(expirationDate)
 
+# Remove Immune Users so they are never considered
+for id in set([id for id in AllUsers if AllUsers[id]['name'] in immuneUsers]):
+    del AllUsers[id]
+
 for section in ['NeverLoggedIn','Warned','Expired']:
     if not cfg.has_section(section): cfg.add_section(section)
 
