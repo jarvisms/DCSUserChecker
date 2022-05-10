@@ -118,10 +118,11 @@ except ValueError:
 
 # Get Immune user lists from config
 immuneUserscfg = cfg.get('DATA', 'immuneUsers')
-immuneUsers = set([ username for username in immuneUserscfg.split(',') ] if immuneUserscfg != '' else [])
+immuneUsers = set([ username.strip().lower() for username in immuneUserscfg.split(',') ] if immuneUserscfg != '' else [])
 immuneUsers.discard(None)
+immuneUsers.discard('')
 cfg.set('DATA', 'immuneUsers', ','.join(sorted(immuneUsers)))
-immuneUsers.add(cfg.get('DCS', 'username')) # Make sure the script doesn't lock itself out
+immuneUsers.add(cfg.get('DCS', 'username').lower()) # Make sure the script doesn't lock itself out
 
 # Get email templates and addresses
 warnsubject = cfg.get('Email', 'warnsubject', fallback ='DCS account inactivity warning')
@@ -167,7 +168,7 @@ for id in AllUsers:
         user['expirationDate'] = get_dt(expirationDate)
 
 # Remove Immune Users so they are never considered
-for id in set([id for id in AllUsers if AllUsers[id]['name'] in immuneUsers]):
+for id in set([id for id in AllUsers if AllUsers[id]['name'].lower() in immuneUsers]):
     del AllUsers[id]
 
 for section in ['NeverLoggedIn','Warned','Expired']:
